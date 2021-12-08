@@ -1,0 +1,27 @@
+service: backlog-per-instance-calculator
+
+frameworkVersion: '2 || 3'
+
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: 20201221
+  region: eu-west-1
+  profile: dev
+
+functions:
+  calculateBacklogPerInstance:
+    handler: calculateBacklogPerInstance.handler
+    name: backlog-per-instance-calculator
+
+    events:
+      # Invoke Lambda function every minute
+      - schedule: rate(1 minute)
+
+plugins:
+  - serverless-bundle
+
+custom:
+  bundle:
+      linting: false
