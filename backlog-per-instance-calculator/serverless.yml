@@ -9,6 +9,9 @@ provider:
   lambdaHashingVersion: 20201221
   region: eu-west-1
   profile: dev
+  environment:
+    QUEUE_URL: "https://sqs.eu-west-1.amazonaws.com/399971917915/my_queue"
+    ASG_NAME: "sqs_workers_autoscaling_group"
 
 functions:
   calculateBacklogPerInstance:
