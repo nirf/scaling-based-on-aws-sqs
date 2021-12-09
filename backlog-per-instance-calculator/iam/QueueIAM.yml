@@ -1,0 +1,5 @@
+MyQueueIAM:
+  Effect: Allow
+  Action:
+    - sqs:GetQueueAttributes
+  Resource: ${ssm:/sqsAutoscaling/queueArn}

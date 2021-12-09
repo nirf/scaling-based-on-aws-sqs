@@ -5,28 +5,13 @@ const autoScaling = new AWS.AutoScaling()
 const cloudWatch = new AWS.CloudWatch()
 
 async function calculateBacklogPerInstance(event, context) {
-    const approximateNumberOfMessage = getApproximateNumberOfMessages(process.env.QUEUE_URL)
+    const approximateNumberOfMessage = await getApproximateNumberOfMessages(process.env.QUEUE_URL)
     console.log('approximateNumberOfMessage', approximateNumberOfMessage)
     const runningInstances = await getRunningInstances(process.env.ASG_NAME)
     console.log('runningInstances', runningInstances)
     const backlogPerInstance = getBacklogPerInstance(runningInstances, approximateNumberOfMessage)
     console.log('backlogPerInstance', backlogPerInstance)
-    const response = await cloudWatch.putMetricData({
-        MetricData: [
-            {
-                MetricName: 'BacklogPerInstance',
-                Dimensions: [
-                    {
-                        Name: 'Project',
-                        Value: 'SQSAutoScalingDemo'
-                    }
-                ],
-                Unit: 'None',
-                Value: backlogPerInstance,
-            }
-        ],
-        Namespace: 'SQS/AutoScaling',
-    })
+    const response = await putMetricData(backlogPerInstance)
     console.log('cloudWatch putMetricData response', response)
 }
 
@@ -51,6 +36,25 @@ async function getRunningInstances(autoScalingGroupName) {
 
 function getBacklogPerInstance(runningInstances, approximateNumberOfMessage) {
     return runningInstances === 0 ? 0 : approximateNumberOfMessage / runningInstances;
+}
+
+function putMetricData(backlogPerInstance) {
+    return cloudWatch.putMetricData({
+        MetricData: [
+            {
+                MetricName: 'BacklogPerInstance',
+                Dimensions: [
+                    {
+                        Name: 'Project',
+                        Value: 'SQSAutoScalingDemo'
+                    }
+                ],
+                Unit: 'None',
+                Value: backlogPerInstance,
+            }
+        ],
+        Namespace: 'SQS/AutoScaling',
+    }).promise();
 }
 
 export const handler = calculateBacklogPerInstance

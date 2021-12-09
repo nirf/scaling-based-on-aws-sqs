@@ -7,19 +7,22 @@ provider:
   name: aws
   runtime: nodejs12.x
   lambdaHashingVersion: 20201221
+  variablesResolutionMode: 20210326
   region: eu-west-1
   profile: dev
   environment:
-    QUEUE_URL: "https://sqs.eu-west-1.amazonaws.com/399971917915/my_queue"
-    ASG_NAME: "sqs_workers_autoscaling_group"
+    QUEUE_URL: ${ssm:/sqsAutoscaling/queueUrl}
+    ASG_NAME: ${ssm:/sqsAutoscaling/autoScalingGroupName}
+  iamRoleStatements:
+    - ${file(iam/QueueIAM.yml):MyQueueIAM}
+    - ${file(iam/AutoScaleIAM.yml):AutoScaleIAM}
+    - ${file(iam/CloudWatchIAM.yml):CloudWatchIAM}
 
 functions:
   calculateBacklogPerInstance:
-    handler: calculateBacklogPerInstance.handler
+    handler: src/handlers/calculateBacklogPerInstance.handler
     name: backlog-per-instance-calculator
-
     events:
-      # Invoke Lambda function every minute
       - schedule: rate(1 minute)
 
 plugins:
@@ -27,4 +30,4 @@ plugins:
 
 custom:
   bundle:
-      linting: false
+    linting: false

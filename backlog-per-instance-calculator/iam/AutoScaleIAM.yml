@@ -1,0 +1,6 @@
+AutoScaleIAM:
+  Effect: Allow
+  Action:
+    - autoscaling:DescribeAutoScalingGroups
+  Resource: "*"
+#  Resource: ${ssm:/sqsAutoscaling/autoScalingGroupArn}

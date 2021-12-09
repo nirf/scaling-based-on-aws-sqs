@@ -1,0 +1,5 @@
+CloudWatchIAM:
+  Effect: Allow
+  Action:
+    - cloudwatch:PutMetricData
+  Resource: "*"
