@@ -12,7 +12,7 @@ resource "aws_autoscaling_group" "sqs_workers_autoscaling_group" {
   vpc_zone_identifier = [
     aws_subnet.main-private-1.id]
   launch_configuration = aws_launch_configuration.sqs_workers_launch_configuration.name
-  min_size = 0
+  min_size = 1
   max_size = 10
   health_check_grace_period = 300
   health_check_type = "EC2"

@@ -3,4 +3,3 @@ AutoScaleIAM:
   Action:
     - autoscaling:DescribeAutoScalingGroups
   Resource: "*"
-#  Resource: ${ssm:/sqsAutoscaling/autoScalingGroupArn}

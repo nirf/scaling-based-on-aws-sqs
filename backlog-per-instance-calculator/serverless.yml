@@ -22,12 +22,13 @@ functions:
   calculateBacklogPerInstance:
     handler: src/handlers/calculateBacklogPerInstance.handler
     name: backlog-per-instance-calculator
+    logRetentionInDays: 30
     events:
       - schedule: rate(1 minute)
 
 plugins:
   - serverless-bundle
-
+  - serverless-plugin-log-retention
 custom:
   bundle:
     linting: false
