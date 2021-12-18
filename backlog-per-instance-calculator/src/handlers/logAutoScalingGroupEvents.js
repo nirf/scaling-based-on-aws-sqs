@@ -1,5 +1,5 @@
-import middy from 'middy'
-import {jsonBodyParser} from 'middy/middlewares'
+import middy from '@middy/core'
+import jsonBodyParser from '@middy/http-json-body-parser'
 
 async function logAutoScalingGroupEvents(event, context) {
     // need to add middy to parse the event and log it where it will be easy to read
