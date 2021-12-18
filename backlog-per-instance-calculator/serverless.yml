@@ -8,11 +8,10 @@ provider:
   runtime: nodejs12.x
   lambdaHashingVersion: 20201221
   variablesResolutionMode: 20210326
+  memorySize: 128
+  timeout: 3
   region: eu-west-1
   profile: dev
-  environment:
-    QUEUE_URL: ${ssm:/sqsAutoscaling/queueUrl}
-    ASG_NAME: ${ssm:/sqsAutoscaling/autoScalingGroupName}
   iamRoleStatements:
     - ${file(iam/QueueIAM.yml):MyQueueIAM}
     - ${file(iam/AutoScaleIAM.yml):AutoScaleIAM}
@@ -22,6 +21,9 @@ functions:
   calculateBacklogPerInstance:
     handler: src/handlers/calculateBacklogPerInstance.handler
     name: backlog-per-instance-calculator
+    environment:
+      QUEUE_URL: ${ssm:/sqsAutoscaling/queueUrl}
+      ASG_NAME: ${ssm:/sqsAutoscaling/autoScalingGroupName}
     events:
       - schedule: rate(1 minute)
   logAutoScalingGroupEvents:
@@ -44,7 +46,6 @@ functions:
 
 plugins:
   - serverless-bundle
-  - serverless-plugin-log-retention
 custom:
   bundle:
     linting: false
