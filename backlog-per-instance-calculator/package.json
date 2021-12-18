@@ -8,6 +8,7 @@
     "serverless-bundle": "^5.2.0"
   },
   "dependencies": {
-    "aws-sdk": "^2.1044.0"
+    "aws-sdk": "^2.1044.0",
+    "middy": "^0.36.0"
   }
 }

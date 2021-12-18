@@ -22,9 +22,25 @@ functions:
   calculateBacklogPerInstance:
     handler: src/handlers/calculateBacklogPerInstance.handler
     name: backlog-per-instance-calculator
-    logRetentionInDays: 30
     events:
       - schedule: rate(1 minute)
+  logAutoScalingGroupEvents:
+    handler: src/handlers/logAutoScalingGroupEvents.handler
+    name: log-auto-scaling-group-events
+    events:
+      - eventBridge:
+          enabled: true
+          pattern:
+            source:
+              - aws.autoscaling
+            detail-type:
+              - 'EC2 Instance Launch Successful'
+              - 'EC2 Instance Launch Unsuccessful'
+              - 'EC2 Instance Terminate Successful'
+              - 'EC2 Instance Terminate Unsuccessful'
+            detail:
+              AutoScalingGroupName:
+                - ${ssm:/sqsAutoscaling/autoScalingGroupName}
 
 plugins:
   - serverless-bundle
