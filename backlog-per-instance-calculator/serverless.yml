@@ -24,6 +24,7 @@ functions:
     environment:
       QUEUE_URL: ${ssm:/sqsAutoscaling/queueUrl}
       ASG_NAME: ${ssm:/sqsAutoscaling/autoScalingGroupName}
+      ACCEPTABLE_BACKLOG_PER_INSTANCE: ${ssm:/sqsAutoscaling/acceptableBacklogPerInstance}
     events:
       - schedule: rate(1 minute)
   logAutoScalingGroupEvents:

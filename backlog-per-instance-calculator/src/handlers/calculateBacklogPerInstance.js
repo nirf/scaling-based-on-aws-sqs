@@ -6,13 +6,45 @@ const cloudWatch = new AWS.CloudWatch()
 
 async function calculateBacklogPerInstance(event, context) {
     const approximateNumberOfMessage = await getApproximateNumberOfMessages(process.env.QUEUE_URL)
-    console.log('approximateNumberOfMessage', approximateNumberOfMessage)
     const runningInstances = await getRunningInstances(process.env.ASG_NAME)
-    console.log('runningInstances', runningInstances)
-    const backlogPerInstance = getBacklogPerInstance(runningInstances, approximateNumberOfMessage)
-    console.log('backlogPerInstance', backlogPerInstance)
-    const response = await putMetricData(backlogPerInstance)
-    console.log('cloudWatch putMetricData response', response)
+    const metricValues = calculateMetricValues(approximateNumberOfMessage, runningInstances, parseInt(process.env.ACCEPTABLE_BACKLOG_PER_INSTANCE))
+    const backlogPerInstancePutMetricDataResponse = await putBacklogPerInstanceMetricData(metricValues.backlogPerInstance)
+    const initialStateScaleIndicatorPutMetricDataResponse = await putInitialStateScaleIndicatorMetricData(metricValues.initialStateScaleIndicator)
+
+    console.log({
+        metricValues,
+        approximateNumberOfMessage,
+        runningInstances,
+        acceptableBackLogPerInstance: parseInt(process.env.ACCEPTABLE_BACKLOG_PER_INSTANCE),
+        backlogPerInstancePutMetricDataResponse,
+        initialStateScaleIndicatorPutMetricDataResponse
+    })
+}
+
+function calculateMetricValues(approximateNumberOfMessage, runningInstances, target) {
+    if (approximateNumberOfMessage === 0) {
+        // in case there are no messages in the queue we need to scale-in
+        // target tracking scaling policy will do it
+        return {backlogPerInstance: 0, initialStateScaleIndicator: 0}
+    } else {
+        // approximateNumberOfMessage > 0
+        if (runningInstances === 0) {
+            // in case we have messages in the queue but no instances we need to scale-out
+            // simple scaling policy will do it
+            return {backlogPerInstance: target, initialStateScaleIndicator: approximateNumberOfMessage}
+        } else {
+            // runningInstances > 0
+            if (approximateNumberOfMessage <= target) {
+                return {backlogPerInstance: target, initialStateScaleIndicator: 0}
+            } else {
+                // approximateNumberOfMessage > target
+                return {
+                    backlogPerInstance: approximateNumberOfMessage / runningInstances,
+                    initialStateScaleIndicator: 0
+                }
+            }
+        }
+    }
 }
 
 async function getApproximateNumberOfMessages(queueUrl) {
@@ -21,7 +53,7 @@ async function getApproximateNumberOfMessages(queueUrl) {
         AttributeNames: ['ApproximateNumberOfMessages']
     }).promise()
 
-    return queueAttributesResponse.Attributes.ApproximateNumberOfMessages
+    return parseInt(queueAttributesResponse.Attributes.ApproximateNumberOfMessages)
 }
 
 async function getRunningInstances(autoScalingGroupName) {
@@ -34,11 +66,7 @@ async function getRunningInstances(autoScalingGroupName) {
         .length
 }
 
-function getBacklogPerInstance(runningInstances, approximateNumberOfMessage) {
-    return runningInstances === 0 ? 0 : approximateNumberOfMessage / runningInstances;
-}
-
-function putMetricData(backlogPerInstance) {
+function putBacklogPerInstanceMetricData(backlogPerInstance) {
     return cloudWatch.putMetricData({
         MetricData: [
             {
@@ -51,6 +79,25 @@ function putMetricData(backlogPerInstance) {
                 ],
                 Unit: 'None',
                 Value: backlogPerInstance,
+            }
+        ],
+        Namespace: 'SQS/AutoScaling',
+    }).promise();
+}
+
+function putInitialStateScaleIndicatorMetricData(initialStateScaleIndicator) {
+    return cloudWatch.putMetricData({
+        MetricData: [
+            {
+                MetricName: 'InitialStateScaleIndicator',
+                Dimensions: [
+                    {
+                        Name: 'Project',
+                        Value: 'SQSAutoScalingDemo'
+                    }
+                ],
+                Unit: 'None',
+                Value: initialStateScaleIndicator,
             }
         ],
         Namespace: 'SQS/AutoScaling',

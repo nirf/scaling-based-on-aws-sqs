@@ -15,3 +15,9 @@ resource "aws_ssm_parameter" "autoScalingGroupName_aws_ssm_parameter" {
   type  = "String"
   value = aws_autoscaling_group.sqs_workers_autoscaling_group.name
 }
+
+resource "aws_ssm_parameter" "acceptableBacklogPerInstance_aws_ssm_parameter" {
+  name  = "/sqsAutoscaling/acceptableBacklogPerInstance"
+  type  = "String"
+  value = 10
+}

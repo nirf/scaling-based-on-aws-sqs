@@ -8,7 +8,7 @@ variable "AWS_PROFILE" {
   default = "dev"
 }
 variable "AMIS" {
-  type = map(string)
+  type    = map(string)
   default = {
     eu-west-1 = "ami-04dd4500af104442f"
   }
