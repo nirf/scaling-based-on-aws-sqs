@@ -5,15 +5,15 @@ const autoScaling = new AWS.AutoScaling()
 const cloudWatch = new AWS.CloudWatch()
 
 async function calculateBacklogPerInstance(event, context) {
-    const approximateNumberOfMessage = await getApproximateNumberOfMessages(process.env.QUEUE_URL)
+    const approximateNumberOfMessages = await getApproximateNumberOfMessages(process.env.QUEUE_URL)
     const runningInstances = await getRunningInstances(process.env.ASG_NAME)
-    const metricValues = calculateMetricValues(approximateNumberOfMessage, runningInstances, parseInt(process.env.ACCEPTABLE_BACKLOG_PER_INSTANCE))
+    const metricValues = calculateMetricValues(approximateNumberOfMessages, runningInstances, parseInt(process.env.ACCEPTABLE_BACKLOG_PER_INSTANCE))
     const backlogPerInstancePutMetricDataResponse = await putBacklogPerInstanceMetricData(metricValues.backlogPerInstance)
     const initialStateScaleIndicatorPutMetricDataResponse = await putInitialStateScaleIndicatorMetricData(metricValues.initialStateScaleIndicator)
 
     console.log({
         metricValues,
-        approximateNumberOfMessage,
+        approximateNumberOfMessages,
         runningInstances,
         acceptableBackLogPerInstance: parseInt(process.env.ACCEPTABLE_BACKLOG_PER_INSTANCE),
         backlogPerInstancePutMetricDataResponse,
@@ -21,8 +21,8 @@ async function calculateBacklogPerInstance(event, context) {
     })
 }
 
-function calculateMetricValues(approximateNumberOfMessage, runningInstances, target) {
-    if (approximateNumberOfMessage === 0) {
+function calculateMetricValues(approximateNumberOfMessages, runningInstances, target) {
+    if (approximateNumberOfMessages === 0) {
         // in case there are no messages in the queue we need to scale-in
         // target tracking scaling policy will do it
         return {backlogPerInstance: 0, initialStateScaleIndicator: 0}
@@ -31,15 +31,15 @@ function calculateMetricValues(approximateNumberOfMessage, runningInstances, tar
         if (runningInstances === 0) {
             // in case we have messages in the queue but no instances we need to scale-out
             // simple scaling policy will do it
-            return {backlogPerInstance: target, initialStateScaleIndicator: approximateNumberOfMessage}
+            return {backlogPerInstance: target, initialStateScaleIndicator: approximateNumberOfMessages}
         } else {
             // runningInstances > 0
-            if (approximateNumberOfMessage <= target) {
+            if (approximateNumberOfMessages <= target) {
                 return {backlogPerInstance: target, initialStateScaleIndicator: 0}
             } else {
                 // approximateNumberOfMessage > target
                 return {
-                    backlogPerInstance: approximateNumberOfMessage / runningInstances,
+                    backlogPerInstance: approximateNumberOfMessages / runningInstances,
                     initialStateScaleIndicator: 0
                 }
             }
