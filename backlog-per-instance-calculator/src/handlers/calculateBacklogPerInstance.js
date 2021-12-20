@@ -7,45 +7,40 @@ const cloudWatch = new AWS.CloudWatch()
 async function calculateBacklogPerInstance(event, context) {
     const approximateNumberOfMessages = await getApproximateNumberOfMessages(process.env.QUEUE_URL)
     const runningInstances = await getRunningInstances(process.env.ASG_NAME)
-    const metricValues = calculateMetricValues(approximateNumberOfMessages, runningInstances, parseInt(process.env.ACCEPTABLE_BACKLOG_PER_INSTANCE))
-    const backlogPerInstancePutMetricDataResponse = await putBacklogPerInstanceMetricData(metricValues.backlogPerInstance)
-    const initialStateScaleIndicatorPutMetricDataResponse = await putInitialStateScaleIndicatorMetricData(metricValues.initialStateScaleIndicator)
+    const calculatedBacklogPerInstance = getBacklogPerInstance(approximateNumberOfMessages, runningInstances, parseInt(process.env.ACCEPTABLE_BACKLOG_PER_INSTANCE))
+    const backlogPerInstancePutMetricDataResponse = await putBacklogPerInstanceMetricData(calculatedBacklogPerInstance)
 
     console.log({
-        metricValues,
         approximateNumberOfMessages,
         runningInstances,
         acceptableBackLogPerInstance: parseInt(process.env.ACCEPTABLE_BACKLOG_PER_INSTANCE),
-        backlogPerInstancePutMetricDataResponse,
-        initialStateScaleIndicatorPutMetricDataResponse
+        calculatedBacklogPerInstance,
+        backlogPerInstancePutMetricDataResponse
     })
 }
 
-function calculateMetricValues(approximateNumberOfMessages, runningInstances, target) {
+export function getBacklogPerInstance(approximateNumberOfMessages, runningInstances, target) {
     if (approximateNumberOfMessages === 0) {
-        // in case there are no messages in the queue we need to scale-in
-        // target tracking scaling policy will do it
-        return {backlogPerInstance: 0, initialStateScaleIndicator: 0}
-    } else {
-        // approximateNumberOfMessage > 0
+        return 0
+    } else if (approximateNumberOfMessages <= target) {
         if (runningInstances === 0) {
-            // in case we have messages in the queue but no instances we need to scale-out
-            // simple scaling policy will do it
-            return {backlogPerInstance: target, initialStateScaleIndicator: approximateNumberOfMessages}
+            // trigger a scale-out alarm
+            return target + 1
+        } else if (runningInstances === 1) {
+            // don't trigger a scale-in alarm - keep the current state
+            return target
         } else {
-            // runningInstances > 0
-            if (approximateNumberOfMessages <= target) {
-                return {backlogPerInstance: target, initialStateScaleIndicator: 0}
-            } else {
-                // approximateNumberOfMessage > target
-                return {
-                    backlogPerInstance: approximateNumberOfMessages / runningInstances,
-                    initialStateScaleIndicator: 0
-                }
-            }
+            // runningInstances > 1
+            // may cause a scale-in alarm
+            return approximateNumberOfMessages / runningInstances
         }
+
+    } else {
+        // approximateNumberOfMessages > target
+        return runningInstances === 0 ? approximateNumberOfMessages : approximateNumberOfMessages / runningInstances
     }
 }
+
 
 async function getApproximateNumberOfMessages(queueUrl) {
     const queueAttributesResponse = await sqs.getQueueAttributes({
@@ -79,25 +74,6 @@ function putBacklogPerInstanceMetricData(backlogPerInstance) {
                 ],
                 Unit: 'None',
                 Value: backlogPerInstance,
-            }
-        ],
-        Namespace: 'SQS/AutoScaling',
-    }).promise();
-}
-
-function putInitialStateScaleIndicatorMetricData(initialStateScaleIndicator) {
-    return cloudWatch.putMetricData({
-        MetricData: [
-            {
-                MetricName: 'InitialStateScaleIndicator',
-                Dimensions: [
-                    {
-                        Name: 'Project',
-                        Value: 'SQSAutoScalingDemo'
-                    }
-                ],
-                Unit: 'None',
-                Value: initialStateScaleIndicator,
             }
         ],
         Namespace: 'SQS/AutoScaling',

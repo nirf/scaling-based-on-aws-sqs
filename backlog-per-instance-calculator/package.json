@@ -4,7 +4,18 @@
   "description": "Example of creating a function that runs as a cron job using the serverless `schedule` event",
   "author": "",
   "license": "MIT",
+  "scripts": {
+    "test": "jest --coverage  --verbose"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.[t|j]sx?$": "babel-jest"
+    }
+  },
   "devDependencies": {
+    "@babel/preset-env": "^7.16.5",
+    "babel-jest": "^27.4.5",
+    "jest": "^27.4.5",
     "serverless-bundle": "^5.2.0"
   },
   "dependencies": {
