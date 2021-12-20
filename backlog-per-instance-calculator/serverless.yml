@@ -6,6 +6,7 @@ frameworkVersion: '2 || 3'
 provider:
   name: aws
   runtime: nodejs12.x
+  cfLogs: true
   lambdaHashingVersion: 20201221
   variablesResolutionMode: 20210326
   memorySize: 128
@@ -44,6 +45,15 @@ functions:
             detail:
               AutoScalingGroupName:
                 - ${ssm:/sqsAutoscaling/autoScalingGroupName}
+
+resources:
+  Resources:
+    CalculateBacklogPerInstanceLogGroup:
+      Properties:
+        RetentionInDays: "30"
+    LogAutoScalingGroupEventsLogGroup:
+      Properties:
+        RetentionInDays: "30"
 
 plugins:
   - serverless-bundle
