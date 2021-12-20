@@ -5,7 +5,7 @@ const sqs = new AWS.SQS({
     region: 'eu-west-1'
 })
 
-for (let i = 0; i < 250; i++) {
+for (let i = 0; i < 1; i++) {
     sqs.sendMessage({
         MessageAttributes: {
             "Title": {

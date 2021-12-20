@@ -139,3 +139,7 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+# Ignore ssh keys for the ec2 instance
+terraform/mykey
+terraform/mykey.pub

@@ -13,3 +13,11 @@ variable "AMIS" {
     eu-west-1 = "ami-04dd4500af104442f"
   }
 }
+
+variable "PATH_TO_PRIVATE_KEY" {
+  default = "mykey"
+}
+
+variable "PATH_TO_PUBLIC_KEY" {
+  default = "mykey.pub"
+}
