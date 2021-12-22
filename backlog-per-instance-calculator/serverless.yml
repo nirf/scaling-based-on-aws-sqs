@@ -7,6 +7,8 @@ provider:
   name: aws
   runtime: nodejs12.x
   cfLogs: true
+  eventBridge:
+    useCloudFormation: true
   lambdaHashingVersion: 20201221
   variablesResolutionMode: 20210326
   memorySize: 128
@@ -17,15 +19,14 @@ provider:
     - ${file(iam/QueueIAM.yml):MyQueueIAM}
     - ${file(iam/AutoScaleIAM.yml):AutoScaleIAM}
     - ${file(iam/CloudWatchIAM.yml):CloudWatchIAM}
+  environment:
+    QUEUE_URL: ${ssm:/sqsAutoscaling/queueUrl}
+    ASG_NAME: ${ssm:/sqsAutoscaling/autoScalingGroupName}
 
 functions:
   calculateBacklogPerInstance:
     handler: src/handlers/calculateBacklogPerInstance.handler
     name: backlog-per-instance-calculator
-    environment:
-      QUEUE_URL: ${ssm:/sqsAutoscaling/queueUrl}
-      ASG_NAME: ${ssm:/sqsAutoscaling/autoScalingGroupName}
-      ACCEPTABLE_BACKLOG_PER_INSTANCE: ${ssm:/sqsAutoscaling/acceptableBacklogPerInstance}
     events:
       - schedule: rate(1 minute)
   logAutoScalingGroupEvents:

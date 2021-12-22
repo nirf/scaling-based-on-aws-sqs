@@ -10,7 +10,6 @@ async function logAutoScalingGroupEvents(event, context) {
         startTime: event.detail.StartTime,
         endTime: event.detail.EndTime,
         statusCode: event.detail.StatusCode
-
     })
 }
 

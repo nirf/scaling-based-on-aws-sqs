@@ -14,6 +14,6 @@ resource "aws_autoscaling_policy" "backlog-per-instance-target-tracking-policy" 
       statistic   = "Average"
       unit        = "None"
     }
-    target_value = aws_ssm_parameter.acceptableBacklogPerInstance_aws_ssm_parameter.value
+    target_value = 10
   }
 }
