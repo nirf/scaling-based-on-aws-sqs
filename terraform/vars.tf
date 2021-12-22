@@ -5,7 +5,7 @@ variable "AWS_REGION" {
 
 variable "AWS_PROFILE" {
   # the default is default on aws
-  default = "dev"
+  default = "default"
 }
 variable "AMIS" {
   type    = map(string)

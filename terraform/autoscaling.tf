@@ -3,6 +3,7 @@ resource "aws_launch_configuration" "sqs_workers_launch_configuration" {
   image_id      = var.AMIS[var.AWS_REGION]
   instance_type = "t2.micro"
   user_data = data.template_cloudinit_config.cloudinit-config.rendered
+  iam_instance_profile = aws_iam_instance_profile.ec2_instance_profile.name
   security_groups = [aws_security_group.allow-ssh.id]
   key_name = aws_key_pair.mykeypair.key_name
 }

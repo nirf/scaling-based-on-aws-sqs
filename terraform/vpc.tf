@@ -22,17 +22,6 @@ resource "aws_subnet" "main-public-1" {
   }
 }
 
-resource "aws_subnet" "main-private-1" {
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.0.2.0/24"
-  map_public_ip_on_launch = "false"
-  availability_zone       = "${var.AWS_REGION}a"
-
-  tags = {
-    Name = "main-private-1"
-  }
-}
-
 # Internet GW
 resource "aws_internet_gateway" "main-gw" {
   vpc_id = aws_vpc.main.id
