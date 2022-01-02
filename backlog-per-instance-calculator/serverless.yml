@@ -14,7 +14,6 @@ provider:
   memorySize: 128
   timeout: 3
   region: eu-west-1
-  profile: dev
   iamRoleStatements:
     - ${file(iam/QueueIAM.yml):MyQueueIAM}
     - ${file(iam/AutoScaleIAM.yml):AutoScaleIAM}
