@@ -39,7 +39,7 @@ resource "aws_iam_role_policy" "sqs_policy" {
         "sqs:*"
       ],
       "Effect": "Allow",
-      "Resource": "*"
+      "Resource": "${aws_sqs_queue.queue.arn}"
     }
   ]
 }
