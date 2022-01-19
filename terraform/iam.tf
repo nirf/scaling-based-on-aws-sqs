@@ -36,7 +36,8 @@ resource "aws_iam_role_policy" "sqs_policy" {
   "Statement": [
     {
       "Action": [
-        "sqs:*"
+        "sqs:ReceiveMessage",
+        "sqs:DeleteMessage"
       ],
       "Effect": "Allow",
       "Resource": "${aws_sqs_queue.queue.arn}"

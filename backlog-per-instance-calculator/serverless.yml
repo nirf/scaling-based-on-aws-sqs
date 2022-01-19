@@ -49,9 +49,11 @@ functions:
 resources:
   Resources:
     CalculateBacklogPerInstanceLogGroup:
+      Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
     LogAutoScalingGroupEventsLogGroup:
+      Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
 
