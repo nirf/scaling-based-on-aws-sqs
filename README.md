@@ -1,6 +1,6 @@
 # scaling-based-on-aws-sqs
 **Deep dive on how to scale instances based on AWS SQS**
-## Tutorial - TODO ONCE THE VIDEO IS READY
+## Video Tutorial - TODO ONCE THE VIDEO IS READY - do a screenshot with the youtube indication
 [![Scaling based on Amazon SQS Tutorial](assets/images/thumbnail.png)](https://www.youtube.com/watch?v=un62_Y5v1UA "Example")
 
 ## Architecture
@@ -56,8 +56,8 @@ scaling-based-on-aws-sqs/backlog-per-instance-calculator> npm i
 scaling-based-on-aws-sqs/backlog-per-instance-calculator> serverless deploy
 ```
 ### Publish messages to the SQS Q
-copy from the terminal the terraform output the value of aws_sqs_queue_url (after running terraform deploy) and paste it on [publishMessages.js](backlog-per-instance-calculator/src/scripts/publishMessages.js)\
-this script will publish 200 messages to the queue, 100 each time with 1 minute between them (you can change it as you want)
+Copy the created queue-url (from terraform output or from AWS console) and paste it in [publishMessages.js](backlog-per-instance-calculator/src/scripts/publishMessages.js)\
+The script publishes 200 messages to the queue, 100 each time with 1 minute between them (you can change it as you want)
 ```
 scaling-based-on-aws-sqs/backlog-per-instance-calculator> npm run publish
 ```
