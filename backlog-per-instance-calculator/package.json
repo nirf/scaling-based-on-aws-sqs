@@ -5,6 +5,7 @@
   "author": "",
   "license": "MIT",
   "scripts": {
+    "publish": "node src/scripts/publishMessages.js",
     "test": "jest --coverage  --verbose"
   },
   "jest": {

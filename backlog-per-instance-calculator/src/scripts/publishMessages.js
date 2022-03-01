@@ -1,11 +1,11 @@
 const AWS = require('aws-sdk')
-const credentials = new AWS.SharedIniFileCredentials({profile: 'dev'})
+const credentials = new AWS.SharedIniFileCredentials({profile: 'default'})
 AWS.config.credentials = credentials
 const sqs = new AWS.SQS({
     region: 'eu-west-1'
 })
 
-const QueueUrl = "https://sqs.eu-west-1.amazonaws.com/399971917915/my_queue"
+const QueueUrl = "<enter-the-queue-url-from-terraform-output>"
 
 
 sendMessages(100, 60 * 1000, 2).then(() => console.log('Finished'))

@@ -46,12 +46,20 @@ Enter file in which to save the key: <full-path>/scaling-based-on-aws-sqs/infra/
 ```
 #### Running terraform
 ```
-scaling-based-on-aws-sqs/infra> terraform inif
+scaling-based-on-aws-sqs/infra> terraform init
 scaling-based-on-aws-sqs/infra> terraform apply
 ```
 ### Serverless
 ```
+scaling-based-on-aws-sqs/backlog-per-instance-calculator> npm i -g serverless
+scaling-based-on-aws-sqs/backlog-per-instance-calculator> npm i
 scaling-based-on-aws-sqs/backlog-per-instance-calculator> serverless deploy
+```
+### Publish messages to the SQS Q
+copy from the terminal the terraform output the value of aws_sqs_queue_url (after running terraform deploy) and paste it on [publishMessages.js](backlog-per-instance-calculator/src/scripts/publishMessages.js)\
+this script will publish 200 messages to the queue, 100 each time with 1 minute between them (you can change it as you want)
+```
+scaling-based-on-aws-sqs/backlog-per-instance-calculator> npm run publish
 ```
 ### Useful commands for debugging
 Lets you watch the logs of a specific function.
