@@ -141,5 +141,5 @@ override.tf.json
 terraform.rc
 
 # Ignore ssh keys for the ec2 instance
-terraform/mykey
-terraform/mykey.pub
+infra/mykey
+infra/mykey.pub
