@@ -39,8 +39,15 @@ Infrastructure as code
 Terraform and serverless framework must be installed!\
 Running order is important!
 ### Terraform
+#### Creating ssh keys
 ```
-scaling-based-on-aws-sqs/terraform> terraform apply
+scaling-based-on-aws-sqs/infra> ssh-keygen -t rsa
+Enter file in which to save the key: <full-path>/scaling-based-on-aws-sqs/infra/mykey
+```
+#### Running terraform
+```
+scaling-based-on-aws-sqs/infra> terraform inif
+scaling-based-on-aws-sqs/infra> terraform apply
 ```
 ### Serverless
 ```
@@ -62,7 +69,7 @@ scaling-based-on-aws-sqs/backlog-per-instance-calculator> serverless remove
 ```
 #### Terraform
 ```
-scaling-based-on-aws-sqs/terraform> terraform destroy
+scaling-based-on-aws-sqs/infra> terraform destroy
 ```
 ## Links
 This project is inspired by [Scaling based on Amazon SQS](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-using-sqs-queue.html)
