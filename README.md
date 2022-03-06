@@ -57,7 +57,7 @@ scaling-based-on-aws-sqs/backlog-per-instance-calculator> serverless deploy
 ```
 ### Publish messages to the SQS Q
 Copy the created queue-url (from terraform output or from AWS console) and paste it in [publishMessages.js](backlog-per-instance-calculator/src/scripts/publishMessages.js)\
-The script publishes 200 messages to the queue, 100 each time with 1 minute between them (you can change it as you want)
+The script publishes batchSize messages to the queue, in each round, and sleeps sleepInMs between each iteration
 ```
 scaling-based-on-aws-sqs/backlog-per-instance-calculator> npm run publish
 ```
