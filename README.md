@@ -1,6 +1,6 @@
 # scaling-based-on-aws-sqs
 **Deep dive on how to scale instances based on AWS SQS**
-## Video Tutorial - TODO ONCE THE VIDEO IS READY - do a screenshot with the youtube indication
+## Video Tutorial
 [![Scaling based on Amazon SQS Tutorial](assets/images/thumbnail.png)](https://www.youtube.com/watch?v=un62_Y5v1UA "Example")
 
 ## Architecture
@@ -33,12 +33,12 @@ AWS_REGION=<region>
 QUEUE_URL=<sqs-queue-url>
 LOCALSTACK_ENABLED=<boolean> - you should have localstack installed
 ```
-## Terraform
-Infrastructure as code
+## infra
+Terraform - Infrastructure as code
 ## Running instructions
 Terraform and serverless framework must be installed!\
 Running order is important!
-### Terraform
+### infra
 #### Creating ssh keys
 ```
 scaling-based-on-aws-sqs/infra> ssh-keygen -t rsa
@@ -75,7 +75,7 @@ Cleanup order is important!
 ```
 scaling-based-on-aws-sqs/backlog-per-instance-calculator> serverless remove
 ```
-#### Terraform
+#### infra
 ```
 scaling-based-on-aws-sqs/infra> terraform destroy
 ```
@@ -84,6 +84,8 @@ This project is inspired by [Scaling based on Amazon SQS](https://docs.aws.amazo
 \
 Lambda functions are deployed using [Serverless Framework](https://www.serverless.com/framework/docs/getting-started)
 \
-Infrastructue as code [Terraform](https://www.terraform.io/)
+Infrastructure as code [Terraform](https://www.terraform.io/)
+\
+Node.js middleware engine for AWS Lambda [middy](https://middy.js.org/)
 
 

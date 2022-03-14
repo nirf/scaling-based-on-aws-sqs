@@ -54,6 +54,7 @@ function putBacklogPerInstanceMetricData(backlogPerInstance) {
                     }
                 ],
                 Unit: 'None',
+                // current backlog per instance
                 Value: backlogPerInstance,
             }
         ],
