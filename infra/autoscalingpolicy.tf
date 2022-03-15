@@ -12,7 +12,6 @@ resource "aws_autoscaling_policy" "backlog-per-instance-target-tracking-policy" 
       metric_name = "BacklogPerInstance"
       namespace   = "SQS/AutoScaling"
       statistic   = "Average"
-      unit        = "None"
     }
     // acceptable backlog per instance
     target_value = 10

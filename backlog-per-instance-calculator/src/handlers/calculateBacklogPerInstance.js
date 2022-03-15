@@ -6,7 +6,7 @@ const cloudWatch = new AWS.CloudWatch()
 
 async function calculateBacklogPerInstance(event, context) {
     const approximateNumberOfMessages = await getApproximateNumberOfMessages(process.env.QUEUE_URL)
-    const runningInstances = await getRunningInstances(process.env.ASG_NAME)
+    const runningInstances = await getNumberOfRunningInstances(process.env.ASG_NAME)
     const calculatedBacklogPerInstance = getBacklogPerInstance(approximateNumberOfMessages, runningInstances)
     const backlogPerInstancePutMetricDataResponse = await putBacklogPerInstanceMetricData(calculatedBacklogPerInstance)
 
@@ -28,7 +28,7 @@ async function getApproximateNumberOfMessages(queueUrl) {
     return parseInt(queueAttributesResponse.Attributes.ApproximateNumberOfMessages)
 }
 
-async function getRunningInstances(autoScalingGroupName) {
+async function getNumberOfRunningInstances(autoScalingGroupName) {
     const autoScalingDescriptionResponse = await autoScaling.describeAutoScalingGroups({
         AutoScalingGroupNames: [autoScalingGroupName]
     }).promise()
@@ -53,7 +53,6 @@ function putBacklogPerInstanceMetricData(backlogPerInstance) {
                         Value: 'SQSAutoScalingDemo'
                     }
                 ],
-                Unit: 'None',
                 // current backlog per instance
                 Value: backlogPerInstance,
             }
