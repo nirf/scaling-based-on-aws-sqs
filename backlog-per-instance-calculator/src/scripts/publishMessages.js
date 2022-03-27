@@ -2,10 +2,10 @@ const AWS = require('aws-sdk')
 const credentials = new AWS.SharedIniFileCredentials({profile: 'default'})
 AWS.config.credentials = credentials
 const sqs = new AWS.SQS({
-    region: 'eu-west-1'
+    region: '<region>'
 })
 
-const QueueUrl = 'https://sqs.eu-west-1.amazonaws.com/399971917915/my_queue'
+const QueueUrl = '<queue-url>'
 
 
 sendMessages(50).then(() => console.log('Finished'))

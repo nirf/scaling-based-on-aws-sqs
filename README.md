@@ -1,7 +1,7 @@
 # scaling-based-on-aws-sqs
 **Deep dive on how to scale instances based on AWS SQS**
 ## Video Tutorial
-[![Scaling based on Amazon SQS Tutorial](assets/images/thumbnail.png)](https://www.youtube.com/watch?v=un62_Y5v1UA "Example")
+[![Scaling based on Amazon SQS Tutorial](assets/images/thumbnail.png)](https://youtu.be/t6h32ccBxdM)
 
 ## Architecture
 ![Architecture](assets/images/Scaling%20based%20on%20Amazon%20SQS%20-%20Diagram.jpg)
